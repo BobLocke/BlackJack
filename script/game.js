@@ -2,11 +2,12 @@
 // Ryan "Bob" Dean
 
 var game;
-var bet;
+var bet = null;
 var radios = document.getElementsByName("bet");
 dealBtn = document.getElementById("deal");
 hitBtn = document.getElementById("hit");
 stayBtn = document.getElementById("stay");
+dblBtn = document.getElementById("double");
 var money = 500;
 
 var output = document.getElementById("game");
@@ -25,6 +26,7 @@ var getBet = function() {
 
 var log = function(string){
     output.innerHTML += "<p>" + string + "</p>";
+
 };
 
 var Hand = function() {
@@ -40,7 +42,6 @@ var Game = function() {
         var player;
         var dealer;
         var deck;
-        var finished = false;
      
     var draw = function(h) {
         var card = deck.deck.pop();
@@ -63,7 +64,13 @@ var Game = function() {
     };
 
     var deal = function () {
+        if (!bet){
+            log("Error: No bet selected. Please select a bet.");
+            end(0);
+            return;
+        }
         dealBtn.disabled = true;
+        money -= bet;
         draw(player);
         log("Player bets " + bet + " credits and is dealt: " + player.hand[player.hand.length - 1]);
         draw(dealer);
@@ -75,16 +82,30 @@ var Game = function() {
                  log("Blackjack! Player wins "+ (bet*4) + " credits.");
                  end(bet*4);
             } else {
-                log("<p> Hit or Stay? </p>");
+                log("<p> Hit, Stay or Double Down? </p>");
+                dblBtn.disabled = false;
                 hitBtn.disabled = false;
                 stayBtn.disabled = false;
             }
     };
 
+    var double = function() {
+        money -= bet;
+        bet *= 2;
+        log("Player doubles their bet to " + bet + " and draws one card!");
+        hit();
+        if (player.total < 21) {
+            stay();
+        }
+    }
+
     var hit = function () {
         draw(player);
+        dblBtn.disabled = true;
         log("Player is dealt: " + player.hand[player.hand.length - 1] + ", for a total of " + player.total);
         if (player.total > 21) {   
+                    hitBtn.disabled = true;
+                    stayBtn.disabled = true;
                     log("Player busts.");
                     end(0);
         }
@@ -100,16 +121,17 @@ var Game = function() {
         log("Dealer is dealt: " + dealer.hand[player.hand.length - 1] + ", for a total of " + dealer.total);
 
         }
-        if (dealer > 21) {
+        if (dealer.total > 21) {
             log("Dealer busts. Player wins " + (bet * 2) + " credits.");
             end(bet*2);
         } else if (dealer.total > player.total) {
             log("Dealer wins.");
+            end(0);
         } else if (dealer.total === player.total) {
             log("Player draws. Bet is returned.");
             end(bet);
         } else {
-           log("Player wins " + (bet * 2) + "credits.");
+           log("Player wins " + (bet * 2) + " credits.");
            end(bet*2);
         }
     }
@@ -117,6 +139,18 @@ var Game = function() {
     var end = function(winnings) {
         money += winnings;
         log("Player has " + money + " credits. Place your bet and deal again?");
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked === true) {
+                bet = radios[i].value;
+            }
+            if (money < Number(radios[i].value)){
+                radios[i].disabled = true;
+                radios[i].checked = false;
+                bet = null;
+            } else {
+                radios[i].disabled = false;
+            }
+        }
         document.getElementById("deal").disabled = false;
     }
 
@@ -131,10 +165,24 @@ var Game = function() {
         return {
             hit : hit,
             deal: deal,
-            stay: stay
+            stay: stay,
+            double: double
         };
 };
 
-hitBtn.addEventListener("click", function() {game.hit()});
-stayBtn.addEventListener("click", function() {game.stay()});
-dealBtn.addEventListener("click", function() { getBet(); game = Game()});
+var main = function() {
+    log("Welcome to Blackjack! Player has " + money + " credits. Place your bet and deal!");
+    for (var i = 0; i < radios.length; i++) {
+                        radios[i].disabled = false;
+                }
+    dealBtn.disabled = false;
+    hitBtn.disabled = true;
+    stayBtn.disabled = true;
+    dblBtn.disabled = true;
+
+    hitBtn.addEventListener("click", function() {game.hit()});
+    dblBtn.addEventListener("click", function() {game.double()});
+    stayBtn.addEventListener("click", function() {game.stay()});
+    dealBtn.addEventListener("click", function() { getBet(); game = Game()});
+}
+
