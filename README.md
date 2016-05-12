@@ -1,6 +1,6 @@
 # BlackJack
-#Ryan "Bob" Dean
-#lockelocke1620@yahoo.com
+@author Ryan "Bob" Dean
+@email lockelocke1620@yahoo.com
 
 Blackjack written in JS to be played on a browser. 
 To play, run /static/blackjack.html in Firefox or Chrome (IE currently untested).
