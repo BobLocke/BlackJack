@@ -1,4 +1,6 @@
 
+// The deck object consists of a deck builder and a shuffle algorithm.
+
 function Deck() {
   
     //shuffle algorithm adopted from http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -21,10 +23,12 @@ function Deck() {
         return array;
     };
 
+    // A suit is built, then duplicated twice. the second time, 
+    //the deck has two suits from the first dupe, resulting in a full deck.
+
     var deck = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
     deck = deck.concat(deck);
     deck = deck.concat(deck);
-    //window.deck = deck.slice();
     return {
         deck: deck,
         shuffle : function() { 

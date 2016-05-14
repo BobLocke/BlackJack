@@ -1,6 +1,19 @@
 // Simple Blackjack Game
 // Ryan "Bob" Dean
 
+/* 
+In this game, you begin with 500 credits with which to bet. After the initial deal, 
+you can choose to
+
+Hit : Draw a card
+Stay: Stop drawing, after which the dealer begins drawing (stays on soft 17)
+Double Down: Double your bet, draw a card, then stay. Only available on first draw.
+
+All changed in the game state are displayed on the screen. This log reset on every deal.
+
+
+*/
+
 var game;
 var bet = null;
 var radios = document.getElementsByName("bet");
@@ -10,10 +23,12 @@ stayBtn = document.getElementById("stay");
 dblBtn = document.getElementById("double");
 var money = 500;
 
+var initialMessage = "";
+
 var output = document.getElementById("game");
 
 
-// code for obtain radio button value adopted from 
+// code for obtaining radio button value adopted from 
 // http://stackoverflow.com/questions/9618504/get-radio-button-value-with-javascript
 var getBet = function() {
     for (var i = 0, length = radios.length; i < length; i++) {
@@ -29,6 +44,9 @@ var log = function(string){
 
 };
 
+
+//  A hand consists of all the card you're holding, 
+//  the total value of the cards, and a flag stating whether you're holding an ace
 var Hand = function() {
     return {
         hand : [],
@@ -37,6 +55,31 @@ var Hand = function() {
     }
 };
 
+
+
+/* A game consists of 4 external functions and 2 internal functions
+
+Internal:
+
+    draw : called when the player hits or the dealer has less than 17 total. 
+    Draws a card to the hand, and determines if they've busted or not.
+
+    end: Changes the player's credit total according to how the game went, as follows:
+        blackjack: 4 * bet
+        win: 2 * bet
+        draw: bet
+        lose: 0
+
+External:
+
+    hit: Player draws a card. Double down is disabled, and if the player busts, the game ends.
+    stay: The player is finished drawing and the dealer takes its actions. 
+          Then a winnder is determined and the result is sent to end.
+    double: player doubles their bet, draws a card, then stays.
+    deal: Deals 2 cards to the player and the dealer, only revealing the dealer's 2nd card. 
+          If a blackjack is dealt, the player wins immediately.
+
+*/
 var Game = function() {
 
         var player;
