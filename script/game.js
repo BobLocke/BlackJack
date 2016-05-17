@@ -172,7 +172,7 @@ var Game = function() {
             end(0);
         } else if (dealer.total === player.total) {
             log("Player draws. Bet is returned.");
-            end(bet);
+            end(Number(bet));
         } else {
            log("Player wins " + (bet * 2) + " credits.");
            end(bet*2);
