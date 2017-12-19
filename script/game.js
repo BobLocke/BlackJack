@@ -137,7 +137,7 @@ var Game = function() {
         bet *= 2;
         log("Player doubles their bet to " + bet + " and draws one card!");
         hit();
-        if (player.total < 21) {
+        if (player.total <= 21) {
             stay();
         }
     }
@@ -157,6 +157,7 @@ var Game = function() {
     var stay = function() {
         hitBtn.disabled = true;
         stayBtn.disabled = true;
+        dblBtn.disabled = true;
         log("Player stays on " + player.total);
         log("Dealer flips facedown card: " + dealer.hand[0] + ", for a total of " + dealer.total);
         while(dealer.total < 17){
