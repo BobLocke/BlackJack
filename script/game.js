@@ -158,10 +158,10 @@ var Game = function() {
         hitBtn.disabled = true;
         stayBtn.disabled = true;
         log("Player stays on " + player.total);
-        log("Dealer flips facedown card: " + dealer.hand[0]+", for a total of " + dealer.total);
+        log("Dealer flips facedown card: " + dealer.hand[0] + ", for a total of " + dealer.total);
         while(dealer.total < 17){
             draw(dealer);
-        log("Dealer is dealt: " + dealer.hand[player.hand.length - 1] + ", for a total of " + dealer.total);
+        log("Dealer is dealt: " + dealer.hand[dealer.hand.length - 1] + ", for a total of " + dealer.total);
 
         }
         if (dealer.total > 21) {
